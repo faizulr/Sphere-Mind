@@ -17,7 +17,6 @@ export default function Home() {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
   
   // Form State
   const [newTitle, setNewTitle] = useState("");
@@ -213,72 +212,7 @@ export default function Home() {
           {/* Left: Selected Idea Details */}
           <div className="w-full max-w-md pointer-events-none">
             <AnimatePresence mode="wait">
-              {editingNodeId === selectedId && selectedIdea ? (
-                <motion.div
-                  key="edit"
-                  initial={{ opacity: 0, x: -50, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
-                  transition={{ type: "spring", bounce: 0.2 }}
-                  className="pointer-events-auto"
-                >
-                  <BlurCard className="overflow-hidden border-l-4" style={{ borderLeftColor: selectedIdea.color }}>
-                    <div className="p-6 pb-2 flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-md bg-white/5 border border-white/10 text-purple-300">
-                          {getTypeIcon(selectedIdea.type)}
-                        </div>
-                        <div className="text-lg font-semibold text-white">Edit Node</div>
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 text-white/50 hover:text-white -mr-2 -mt-2" onClick={() => setEditingNodeId(null)}>
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="px-6 pb-4 space-y-3">
-                      <Input
-                        placeholder="Title"
-                        className="bg-black/30 border-white/10 text-white placeholder:text-white/20 focus:border-purple-500/50"
-                        value={newTitle}
-                        onChange={e => setNewTitle(e.target.value)}
-                        autoFocus
-                      />
-                      <Textarea
-                        placeholder="Description"
-                        className="bg-black/30 border-white/10 text-white placeholder:text-white/20 focus:border-purple-500/50 h-20 resize-none text-xs"
-                        value={newDesc}
-                        onChange={e => setNewDesc(e.target.value)}
-                      />
-                      {(newType === 'video' || newType === 'audio') && (
-                        <div className="relative">
-                          <LinkIcon className="absolute left-3 top-2.5 w-3.5 h-3.5 text-white/40" />
-                          <Input
-                            placeholder={`Paste ${newType} URL...`}
-                            className="pl-9 bg-black/30 border-white/10 text-white placeholder:text-white/20 focus:border-purple-500/50 text-xs"
-                            value={newMediaUrl}
-                            onChange={e => setNewMediaUrl(e.target.value)}
-                          />
-                        </div>
-                      )}
-                      <div className="flex justify-end gap-2 pt-2">
-                        <Button variant="ghost" size="sm" onClick={() => setEditingNodeId(null)} className="text-white/50 hover:text-white h-8">Cancel</Button>
-                        <Button
-                          size="sm"
-                          className="bg-purple-600 hover:bg-purple-500 text-white border-none h-8"
-                          onClick={async () => {
-                            await updateMutation.mutateAsync({ id: selectedIdea.id, updates: {
-                              title: newTitle,
-                              description: newDesc,
-                              mediaUrl: newMediaUrl || undefined,
-                            }});
-                            setEditingNodeId(null);
-                          }}
-                          disabled={!newTitle.trim()}
-                        >Save</Button>
-                      </div>
-                    </div>
-                  </BlurCard>
-                </motion.div>
-              ) : (
+              {selectedIdea ? (
                 <motion.div
                   key="details"
                   initial={{ opacity: 0, x: -50, scale: 0.9 }}
@@ -290,20 +224,6 @@ export default function Home() {
                   <BlurCard className="overflow-hidden border-l-4" style={{ borderLeftColor: selectedIdea.color }}>
                     {/* Header */}
                     <div className="p-6 pb-2 flex justify-between items-start">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="ml-auto mr-2"
-                        onClick={() => {
-                          setEditingNodeId(selectedIdea.id);
-                          setNewTitle(selectedIdea.title);
-                          setNewDesc(selectedIdea.description || "");
-                          setNewType(selectedIdea.type);
-                          setNewMediaUrl(selectedIdea.mediaUrl || "");
-                        }}
-                      >
-                        Edit
-                      </Button>
                       <div className="flex items-center gap-3">
                          <div className="p-2 rounded-md bg-white/5 border border-white/10 text-purple-300">
                             {getTypeIcon(selectedIdea.type)}
